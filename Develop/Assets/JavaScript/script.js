@@ -1,5 +1,5 @@
 // Assignment code here
-var confirmLength = ""
+var length = ""
 var confirmSpecialCharacter;
 var confirmNumericCharacter;
 var confirmUpperCase;
@@ -7,14 +7,14 @@ var confirmLowerCase;
 
 
 function generatePassword() {
-  var confirmLength = parseInt(prompt("How many characters would you like your password to contain?"));
+  var length = parseInt(prompt("How many characters would you like your password to contain?"));
   // determine length
-  while (isNaN(confirmLength) || confirmLength <= 8 || confirmLength >= 128) {
+  while (isNaN(length) || length < 8 || length > 128) {
     alert("Your password must be between 8-128 characters \nTry Again");
-    var confirmLength = parseInt(prompt("How many characters would you like your password to contain?"));
+    var length = parseInt(prompt("How many characters would you like your password to contain?"));
   }
 
-  alert(`Your password will have ${confirmLength} characters`);
+  alert(`Your password will have ${length} characters`);
 
   // determine other parameters
 
@@ -30,6 +30,28 @@ function generatePassword() {
     var confirmLowerCase = confirm("Click OK to confirm if you would like to include lowercase characters");
     var confirmUpperCase = confirm("Click OK to confirm if you would like to include uppercase characters");
   }
+
+  var generators = []
+
+  if (confirmLowerCase)
+    generators.push(getRandomLower)
+
+  if (confirmUpperCase)
+    generators.push(getRandomUpper)
+
+  if (confirmNumericCharacter)
+    generators.push(getRandomNumber)
+
+  if (confirmSpecialCharacter)
+    generators.push(getRandomSymbol)
+
+  finalPassword = ""
+
+  for (let i = 0; i < length; i++) {
+    var randomStart = getRandomInt(0, generators.length)
+    finalPassword = finalPassword + (generators[randomStart]())
+  }
+  return finalPassword
 }
 
 var randomFunc = {
@@ -38,6 +60,7 @@ var randomFunc = {
   number: getRandomNumber,
   symbol: getRandomSymbol
 }
+
 
 //generating the values for lower, upper, numbers and symbols
 function getRandomLower() {
@@ -58,6 +81,11 @@ function getRandomSymbol() {
 }
 
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
 
 // Get references to the #generate element
 var generateBtn = document.querySelector("#generate");
